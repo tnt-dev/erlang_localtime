@@ -1,9 +1,13 @@
+%% vim: ts=4 sw=4 et
 %% @author  Dmitry S. Melnikov (dmitryme@gmail.com)
 %% @copyright 2010 Dmitry S. Melnikov
 
 -module(localtime_dst).
 
 -author("Dmitry Melnikov <dmitryme@gmail.com>").
+
+-include("tz_database.hrl").
+-include("tz_index.hrl").
 
 -export(
    [
@@ -15,7 +19,15 @@
 
 % check(DateTime, TimeZone) -> is_in_dst | is_not_in_dst | ambiguous_time | time_not_exists
 %  DateTime = DateTime()
-%  TimeZone = tuple()
+%  TimeZone = tuple() | string()
+check(DateTime, Timezone) when is_list(Timezone) ->
+    case lists:keyfind(localtime:get_timezone(Timezone), 1, ?tz_database) of
+        false ->
+            {error, unknown_tz};
+        TZ -> 
+            check(DateTime, TZ)
+    end;
+        
 check({Date = {Year, _, _},Time}, {_, _, _, _Shift, DstShift, DstStartRule, DstStartTime, DstEndRule, DstEndTime}) ->
    DstStartDay = get_dst_day_of_year(DstStartRule, Year),
    DstEndDay = get_dst_day_of_year(DstEndRule, Year),

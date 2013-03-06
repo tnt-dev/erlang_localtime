@@ -1,6 +1,6 @@
+%% vim: ts=4 sw=4 et
 %% @author  Dmitry S. Melnikov (dmitryme@gmail.com)
 %% @copyright 2010 Dmitry S. Melnikov
-
 -module(localtime).
 
 -author("Dmitry Melnikov <dmitryme@gmail.com>").
@@ -17,6 +17,9 @@
      ,tz_name/2
      ,tz_shift/2
      ,tz_shift/3
+     ,get_timezone/1
+     ,list_timezones/0
+     ,adjust_datetime/2
   ]).
 
 % utc_to_local(UtcDateTime, Timezone) -> LocalDateTime | [LocalDateTime, DstLocalDateTime] | {error, ErrDescr}
@@ -185,13 +188,17 @@ tz_shift(LocalDateTime, TimezoneFrom, TimezoneTo) ->
          Err
    end.
 
-% =======================================================================
-% privates
-% =======================================================================
+list_timezones() ->
+    dict:fetch_keys(?tz_index).
 
 adjust_datetime(DateTime, Minutes) ->
    Seconds = calendar:datetime_to_gregorian_seconds(DateTime) + Minutes * 60,
    calendar:gregorian_seconds_to_datetime(Seconds).
+
+% =======================================================================
+% privates
+% =======================================================================
+
 
 invert_shift(Minutes) ->
    -Minutes.
