@@ -2,6 +2,8 @@
  [
   {description, ""},
   {vsn, "1.0"},
+  {applications, [kernel, stdlib]},
+  {modules, []},
   {registered, []},
   {env, []}
  ]}.
